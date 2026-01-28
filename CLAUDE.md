@@ -39,14 +39,14 @@ Traditional video editing is timeline-based and non-programmable. Mission Contro
 ## 3. Architecture Rules (Critical)
 
 ### Rule 1: Sandpack is King
-All video code runs **inside** the Sandpack virtual browser environment, NOT in the Next.js app itself.
+All video code runs **inside** the Sandpack virtual browser environment, NOT in the Next.js app itself. We use Sandpack's built-in CodeMirror editor (via SandpackCodeEditor) instead of Monaco to keep the bundle lightweight.
 
 ```
 ┌─────────────────────────────────────────────────┐
 │ Next.js App (The IDE Shell)                     │
-│  ├── Monaco Editor (code editing)               │
-│  ├── File Explorer (project files)              │
-│  └── Sandpack Container                         │
+│  ├── SandpackCodeEditor (code editing)          │
+│  ├── Custom File Explorer (project files)       │
+│  └── SandpackPreview                            │
 │       └── Virtual Browser                       │
 │            └── Remotion Player (video renders)  │
 └─────────────────────────────────────────────────┘
@@ -108,13 +108,14 @@ mission-control/
 ├── src/
 │   ├── app/                    # Next.js App Router
 │   │   ├── layout.tsx          # Root layout (dark theme)
-│   │   ├── page.tsx            # Main IDE page
-│   │   └── globals.css         # Tailwind + custom styles
+│   │   ├── page.tsx            # Main IDE page (SandpackProvider)
+│   │   └── globals.css         # Tailwind + Sandpack overrides
 │   ├── components/
-│   │   ├── Editor/             # Monaco editor wrapper
-│   │   ├── Preview/            # Sandpack + Remotion player
-│   │   ├── FileExplorer/       # Project file tree
-│   │   └── Toolbar/            # Top bar actions
+│   │   └── ide/                # IDE shell components
+│   │       ├── Sidebar.tsx     # Left icon bar (Explorer, Search, AI, Settings)
+│   │       ├── ActivityBar.tsx # Bottom status bar
+│   │       ├── FileExplorer.tsx# Project file tree (uses useSandpack hook)
+│   │       └── index.ts        # Barrel exports
 │   └── lib/
 │       ├── sandpack/           # Sandpack configuration
 │       └── templates/          # Default video templates
@@ -139,10 +140,12 @@ mission-control/
 - [ ] Render "Mission Control" text in Remotion Player
 
 ### Sprint 2: UI Polish
-- [ ] Monaco Editor integration (VS Code feel)
+- [x] SandpackCodeEditor integration (VS Code feel, lightweight)
 - [ ] Resizable panels (editor | preview)
-- [ ] File explorer sidebar
-- [ ] Dark theme matching VS Code
+- [x] File explorer sidebar (custom component using useSandpack)
+- [x] Dark theme matching VS Code
+- [x] Sidebar with icons (Explorer, Search, AI, Settings)
+- [x] Status bar (ActivityBar)
 
 ### Sprint 3: AI Integration
 - [ ] Connect to AI for code generation
@@ -230,7 +233,8 @@ npx tsc --noEmit
     "@codesandbox/sandpack-react": "latest",
     "remotion": "4.0.100",
     "@remotion/player": "4.0.100",
-    "lottie-react": "latest"
+    "lottie-react": "latest",
+    "lucide-react": "latest"
   },
   "devDependencies": {
     "typescript": "5.x",
