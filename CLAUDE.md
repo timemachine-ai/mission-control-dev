@@ -22,7 +22,7 @@ Traditional video editing is timeline-based and non-programmable. Mission Contro
 
 | Layer | Technology | Version | Purpose |
 |-------|------------|---------|---------|
-| Framework | Next.js | 14.x | App Router, SSR, API routes |
+| Framework | Next.js | 15.x | App Router, SSR, API routes |
 | Language | TypeScript | 5.x | Type safety everywhere |
 | Styling | Tailwind CSS | 3.x | UI styling (Dark Mode: `#1e1e1e`) |
 | Execution Engine | @codesandbox/sandpack-react | Latest | In-browser Node.js runtime |
@@ -227,7 +227,7 @@ npx tsc --noEmit
 ```json
 {
   "dependencies": {
-    "next": "14.x",
+    "next": "15.x",
     "react": "18.x",
     "react-dom": "18.x",
     "@codesandbox/sandpack-react": "latest",

@@ -1,6 +1,6 @@
 'use client';
 
-import { FileCode, ChevronDown, ChevronRight } from 'lucide-react';
+import { FileCode, ChevronDown } from 'lucide-react';
 import { useSandpack } from '@codesandbox/sandpack-react';
 
 export function FileExplorer() {
