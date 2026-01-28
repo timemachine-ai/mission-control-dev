@@ -1,28 +1,258 @@
 # Project: Mission Control (The Video IDE)
 
 ## 1. Vision
-We are building a browser-based Integrated Development Environment (IDE) for programmatic video.
-- **Goal:** Users describe a video, and the AI generates the React/Remotion code to render it instantly.
-- **Key Difference:** We do not generate MP4s. We generate **Code** that renders Lottie files and React components.
 
-## 2. Tech Stack (Strict)
-- **Framework:** Next.js 14 (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS (Dark Mode: #1e1e1e)
-- **Execution Engine:** @codesandbox/sandpack-react (Running Node.js in browser)
-- **Video Engine:** Remotion (v4.0.100)
+We are building a **browser-based Integrated Development Environment (IDE)** for programmatic video creation.
 
-## 3. Architecture Rules
-- **Sandpack is King:** All video code runs *inside* the Sandpack virtual browser, not the Next.js app.
-- **Explicit Dependencies:** Always define `package.json` inside Sandpack's `files` prop to prevent version conflicts.
-- **No Cross-Origin Errors:** `next.config.js` MUST have `Cross-Origin-Embedder-Policy: require-corp` enabled at all times.
-- **The "Smart Asset" Pattern:** We prefer using Lottie JSON files for complex animations and React for text/layout.
+### What This Means
+- **Goal:** Users describe a video in natural language, and AI generates the React/Remotion code to render it instantly in the browser.
+- **Key Difference:** We do NOT generate MP4 files. We generate **live, editable Code** that renders Lottie animations and React components in real-time.
+- **Think of it as:** VS Code + After Effects, but everything is code-first and runs in the browser.
 
-## 4. Current Status
-- **Sprint 1 (Complete):** Engine is running. Sandpack loads a Remotion player with "Mission Control" text.
-- **Sprint 2 (Next):** UI Polish. We need to make it look like VS Code (Monaco Editor, File Explorer, Resizable panels).
+### Why This Matters
+Traditional video editing is timeline-based and non-programmable. Mission Control treats video as **code**, meaning:
+- Videos can be version-controlled (Git)
+- Components can be reused across projects
+- AI can generate and modify video logic
+- Real-time preview without rendering
 
-## 5. Coding Style
-- **Components:** Functional React components.
-- **Styling:** Tailwind for the outer app, standard CSS/style-props for inside the Sandpack video.
-- **Safety:** Never remove the `files` prop from Sandpack, or the engine crashes.
+---
+
+## 2. Tech Stack (Strict - Do Not Deviate)
+
+| Layer | Technology | Version | Purpose |
+|-------|------------|---------|---------|
+| Framework | Next.js | 14.x | App Router, SSR, API routes |
+| Language | TypeScript | 5.x | Type safety everywhere |
+| Styling | Tailwind CSS | 3.x | UI styling (Dark Mode: `#1e1e1e`) |
+| Execution Engine | @codesandbox/sandpack-react | Latest | In-browser Node.js runtime |
+| Video Engine | Remotion | 4.0.100 | React-based video rendering |
+| Animation | Lottie (lottie-react) | Latest | Complex vector animations |
+
+### Why These Specific Choices
+- **Sandpack:** Runs a full Node.js environment in the browser. No backend needed for code execution.
+- **Remotion:** Treats video frames as React components. Each frame is a function of time.
+- **Lottie:** Designer-friendly animations exported from After Effects as JSON.
+
+---
+
+## 3. Architecture Rules (Critical)
+
+### Rule 1: Sandpack is King
+All video code runs **inside** the Sandpack virtual browser environment, NOT in the Next.js app itself.
+
+```
+┌─────────────────────────────────────────────────┐
+│ Next.js App (The IDE Shell)                     │
+│  ├── Monaco Editor (code editing)               │
+│  ├── File Explorer (project files)              │
+│  └── Sandpack Container                         │
+│       └── Virtual Browser                       │
+│            └── Remotion Player (video renders)  │
+└─────────────────────────────────────────────────┘
+```
+
+### Rule 2: Explicit Dependencies
+**Always** define `package.json` inside Sandpack's `files` prop. Never rely on implicit dependencies.
+
+```tsx
+// CORRECT - Explicit package.json
+<SandpackProvider
+  files={{
+    "/package.json": JSON.stringify({
+      dependencies: {
+        "remotion": "4.0.100",
+        "react": "18.2.0",
+        "@remotion/player": "4.0.100"
+      }
+    }),
+    "/App.tsx": "..."
+  }}
+/>
+
+// WRONG - Missing package.json = version conflicts
+<SandpackProvider files={{ "/App.tsx": "..." }} />
+```
+
+### Rule 3: Cross-Origin Headers (Non-Negotiable)
+`next.config.js` **MUST** have these headers or SharedArrayBuffer fails and video won't render:
+
+```javascript
+const nextConfig = {
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "Cross-Origin-Embedder-Policy", value: "require-corp" },
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+        ],
+      },
+    ];
+  },
+};
+export default nextConfig;
+```
+
+### Rule 4: The "Smart Asset" Pattern
+- **Lottie JSON** = Complex animations (characters, effects, motion graphics)
+- **React Components** = Text, layout, data-driven content
+- **Static Assets** = Images, fonts (served from `/public`)
+
+---
+
+## 4. Project Structure
+
+```
+mission-control/
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── layout.tsx          # Root layout (dark theme)
+│   │   ├── page.tsx            # Main IDE page
+│   │   └── globals.css         # Tailwind + custom styles
+│   ├── components/
+│   │   ├── Editor/             # Monaco editor wrapper
+│   │   ├── Preview/            # Sandpack + Remotion player
+│   │   ├── FileExplorer/       # Project file tree
+│   │   └── Toolbar/            # Top bar actions
+│   └── lib/
+│       ├── sandpack/           # Sandpack configuration
+│       └── templates/          # Default video templates
+├── public/                     # Static assets
+├── next.config.js              # MUST have COOP/COEP headers
+├── tailwind.config.js
+└── package.json
+```
+
+---
+
+## 5. Current Sprint Status
+
+### Sprint 0: Setup (Current)
+- [ ] Create Next.js project with TypeScript, Tailwind, App Router
+- [ ] Configure Cross-Origin headers in next.config.js
+- [ ] Verify project runs without errors
+
+### Sprint 1: Engine Foundation
+- [ ] Integrate Sandpack with Remotion
+- [ ] Create basic video template
+- [ ] Render "Mission Control" text in Remotion Player
+
+### Sprint 2: UI Polish
+- [ ] Monaco Editor integration (VS Code feel)
+- [ ] Resizable panels (editor | preview)
+- [ ] File explorer sidebar
+- [ ] Dark theme matching VS Code
+
+### Sprint 3: AI Integration
+- [ ] Connect to AI for code generation
+- [ ] Natural language to Remotion code
+- [ ] Live preview updates
+
+---
+
+## 6. Coding Style Guide
+
+### Components
+- **Functional components only** (no class components)
+- **Named exports** for components
+- **Props interface** defined above component
+
+```tsx
+interface VideoPreviewProps {
+  code: string;
+  isPlaying: boolean;
+}
+
+export function VideoPreview({ code, isPlaying }: VideoPreviewProps) {
+  return <div>...</div>;
+}
+```
+
+### Styling
+- **Tailwind CSS** for the Next.js app (IDE shell)
+- **Inline styles or CSS modules** inside Sandpack video code
+- **Dark Mode Default:** Background `#1e1e1e`, Text `#d4d4d4`
+
+### File Naming
+- Components: `PascalCase.tsx`
+- Utilities: `camelCase.ts`
+- Constants: `UPPER_SNAKE_CASE`
+
+---
+
+## 7. Common Pitfalls & Solutions
+
+### Pitfall 1: "SharedArrayBuffer is not defined"
+**Cause:** Missing Cross-Origin headers
+**Fix:** Verify `next.config.js` has COOP/COEP headers. Restart dev server.
+
+### Pitfall 2: Sandpack crashes with no error
+**Cause:** Missing `files` prop or empty `package.json`
+**Fix:** Always include explicit `files` prop with valid `package.json`
+
+### Pitfall 3: Remotion video blank/white
+**Cause:** Component not exported correctly or wrong entry point
+**Fix:** Ensure `index.tsx` exports the composition properly
+
+### Pitfall 4: Styles not applying in video
+**Cause:** Tailwind doesn't work inside Sandpack
+**Fix:** Use inline styles or include CSS in Sandpack files
+
+---
+
+## 8. Development Commands
+
+```bash
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Run linting
+npm run lint
+
+# Type check
+npx tsc --noEmit
+```
+
+---
+
+## 9. Key Dependencies Reference
+
+```json
+{
+  "dependencies": {
+    "next": "14.x",
+    "react": "18.x",
+    "react-dom": "18.x",
+    "@codesandbox/sandpack-react": "latest",
+    "remotion": "4.0.100",
+    "@remotion/player": "4.0.100",
+    "lottie-react": "latest"
+  },
+  "devDependencies": {
+    "typescript": "5.x",
+    "tailwindcss": "3.x",
+    "@types/react": "18.x",
+    "@types/node": "20.x"
+  }
+}
+```
+
+---
+
+## 10. Quick Reference for Claude
+
+When working on this project, always remember:
+
+1. **Never remove the `files` prop from Sandpack** - The engine will crash
+2. **Always check next.config.js headers** - Video won't work without them
+3. **Sandpack code is separate from Next.js code** - They're different environments
+4. **Test in browser after every change** - Sandpack errors aren't always visible in terminal
+5. **Remotion version must match** - `remotion` and `@remotion/player` must be same version
+
+---
+
+*Last Updated: Sprint 0 - Foundation Setup*
