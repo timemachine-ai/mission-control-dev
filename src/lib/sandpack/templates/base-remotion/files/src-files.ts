@@ -1,18 +1,27 @@
 /**
  * Source files for Remotion project
- * These are the core files that make up the Remotion video project
+ *
+ * Structure (mirrors real Remotion project):
+ * /App.tsx              ← Sandpack-only: Preview wrapper using @remotion/player
+ * /src/
+ *   ├── Composition.tsx ← Main composition (AI edits this)
+ *   ├── Root.tsx        ← Registers compositions
+ *   ├── index.ts        ← Entry point
+ *   ├── index.css       ← Styles
+ *   └── scenes/         ← AI creates scene files here
  */
 
-// App.tsx - Main entry point for Sandpack with Remotion Player
-// IMPORTANT: Must import from ./MyComp (root level) for Sandpack to resolve correctly
+// App.tsx - Sandpack preview wrapper
+// This file ONLY exists because Sandpack can't run "remotion studio"
+// It imports directly from /src/Composition.tsx - the single source of truth
 export const appFile = `import { Player } from "@remotion/player";
-import { MyComp } from "./MyComp";
+import { MyComposition } from "./src/Composition";
 
 export default function App() {
   return (
     <div style={{ width: "100%", height: "100vh", backgroundColor: "#1e1e1e", display: "flex", justifyContent: "center", alignItems: "center" }}>
       <Player
-        component={MyComp}
+        component={MyComposition}
         durationInFrames={120}
         compositionWidth={1920}
         compositionHeight={1080}
@@ -25,49 +34,8 @@ export default function App() {
 }
 `;
 
-// MyComp.tsx - The main composition that App.tsx renders via Player
-// This MUST be at root level (not in /src) for Sandpack imports to work
-export const myCompFile = `import { AbsoluteFill, useCurrentFrame } from "remotion";
-
-export const MyComp = () => {
-  const frame = useCurrentFrame();
-  const opacity = Math.min(1, frame / 30);
-
-  return (
-    <AbsoluteFill
-      style={{
-        backgroundColor: "white",
-        justifyContent: "center",
-        alignItems: "center",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <h1
-        style={{
-          fontSize: 80,
-          color: "black",
-          fontFamily: "sans-serif",
-          opacity,
-        }}
-      >
-        Mission Control
-      </h1>
-      <p
-        style={{
-          fontSize: 30,
-          color: "#666",
-          fontFamily: "sans-serif",
-          opacity,
-        }}
-      >
-        Frame: {frame}
-      </p>
-    </AbsoluteFill>
-  );
-};
-`;
-
+// /src/Composition.tsx - THE main composition file
+// This is the ONLY composition file. AI edits this.
 export const compositionFile = `import { AbsoluteFill, useCurrentFrame } from "remotion";
 
 export const MyComposition = () => {
