@@ -22,6 +22,7 @@
 
 // Import source files
 import {
+  appFile,
   compositionFile,
   rootFile,
   indexEntryFile,
@@ -81,6 +82,9 @@ export type SandpackFiles = Record<string, string>;
  * Includes ALL files from base-remotion-assets
  */
 export const baseRemotionFiles: SandpackFiles = {
+  // Main App entry point (what Sandpack renders with Remotion Player)
+  "/App.tsx": appFile,
+
   // Package.json
   "/package.json": packageJsonFile,
 

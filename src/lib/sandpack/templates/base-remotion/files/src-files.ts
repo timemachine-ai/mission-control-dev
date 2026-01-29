@@ -3,8 +3,65 @@
  * These are the core files that make up the Remotion video project
  */
 
-export const compositionFile = `export const MyComposition = () => {
-  return null;
+// App.tsx - Main entry point for Sandpack with Remotion Player
+export const appFile = `import { Player } from "@remotion/player";
+import { MyComposition } from "./src/Composition";
+
+export default function App() {
+  return (
+    <div style={{ width: "100%", height: "100vh", backgroundColor: "#1e1e1e", display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <Player
+        component={MyComposition}
+        durationInFrames={120}
+        compositionWidth={1920}
+        compositionHeight={1080}
+        fps={30}
+        controls
+        style={{ width: "100%", maxWidth: 800 }}
+      />
+    </div>
+  );
+}
+`;
+
+export const compositionFile = `import { AbsoluteFill, useCurrentFrame } from "remotion";
+
+export const MyComposition = () => {
+  const frame = useCurrentFrame();
+  const opacity = Math.min(1, frame / 30);
+
+  return (
+    <AbsoluteFill
+      style={{
+        backgroundColor: "white",
+        justifyContent: "center",
+        alignItems: "center",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <h1
+        style={{
+          fontSize: 80,
+          color: "black",
+          fontFamily: "sans-serif",
+          opacity,
+        }}
+      >
+        Mission Control
+      </h1>
+      <p
+        style={{
+          fontSize: 30,
+          color: "#666",
+          fontFamily: "sans-serif",
+          opacity,
+        }}
+      >
+        Frame: {frame}
+      </p>
+    </AbsoluteFill>
+  );
 };
 `;
 
