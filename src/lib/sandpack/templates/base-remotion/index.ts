@@ -1,17 +1,22 @@
 /**
  * Base Remotion Template for Sandpack
  *
- * This module exports all files needed to run a Remotion project
- * inside the Sandpack virtual browser environment.
+ * Structure (mirrors real Remotion project in VS Code):
+ * /App.tsx              ← Sandpack-only: Preview wrapper using @remotion/player
+ * /src/
+ *   ├── Composition.tsx ← Main composition (AI edits this)
+ *   ├── Root.tsx        ← Registers compositions
+ *   ├── index.ts        ← Entry point
+ *   ├── index.css       ← Styles
+ *   └── scenes/         ← AI creates scene files here (empty by default)
  *
  * NOTE: Agent-skill files are kept in src/lib/agent-skills/ for AI reference
- * but are NOT included in Sandpack to avoid overwhelming the bundler.
+ * but are NOT included in Sandpack.
  */
 
 // Import source files
 import {
   appFile,
-  myCompFile,
   compositionFile,
   rootFile,
   indexEntryFile,
@@ -22,17 +27,16 @@ import {
 export type SandpackFiles = Record<string, string>;
 
 /**
- * Sandpack files - ONLY the essential files needed for Remotion to work
- * Keep this minimal to avoid bundler timeouts
+ * Sandpack files - Clean structure matching real Remotion projects
+ *
+ * App.tsx is the ONLY file outside /src/ - it exists solely for Sandpack preview.
+ * Everything else is in /src/ just like a real Remotion project.
  */
 export const baseRemotionFiles: SandpackFiles = {
-  // Main App entry point (what Sandpack renders with Remotion Player)
+  // Sandpack preview wrapper (imports from /src/Composition.tsx)
   "/App.tsx": appFile,
 
-  // MyComp - The composition rendered by App.tsx (MUST be at root level)
-  "/MyComp.tsx": myCompFile,
-
-  // Remotion source files
+  // All Remotion files live in /src/ - just like VS Code
   "/src/Composition.tsx": compositionFile,
   "/src/Root.tsx": rootFile,
   "/src/index.ts": indexEntryFile,
