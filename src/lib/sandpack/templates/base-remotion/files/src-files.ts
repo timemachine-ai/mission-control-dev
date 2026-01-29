@@ -4,14 +4,15 @@
  */
 
 // App.tsx - Main entry point for Sandpack with Remotion Player
+// IMPORTANT: Must import from ./MyComp (root level) for Sandpack to resolve correctly
 export const appFile = `import { Player } from "@remotion/player";
-import { MyComposition } from "./src/Composition";
+import { MyComp } from "./MyComp";
 
 export default function App() {
   return (
     <div style={{ width: "100%", height: "100vh", backgroundColor: "#1e1e1e", display: "flex", justifyContent: "center", alignItems: "center" }}>
       <Player
-        component={MyComposition}
+        component={MyComp}
         durationInFrames={120}
         compositionWidth={1920}
         compositionHeight={1080}
@@ -22,6 +23,49 @@ export default function App() {
     </div>
   );
 }
+`;
+
+// MyComp.tsx - The main composition that App.tsx renders via Player
+// This MUST be at root level (not in /src) for Sandpack imports to work
+export const myCompFile = `import { AbsoluteFill, useCurrentFrame } from "remotion";
+
+export const MyComp = () => {
+  const frame = useCurrentFrame();
+  const opacity = Math.min(1, frame / 30);
+
+  return (
+    <AbsoluteFill
+      style={{
+        backgroundColor: "white",
+        justifyContent: "center",
+        alignItems: "center",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <h1
+        style={{
+          fontSize: 80,
+          color: "black",
+          fontFamily: "sans-serif",
+          opacity,
+        }}
+      >
+        Mission Control
+      </h1>
+      <p
+        style={{
+          fontSize: 30,
+          color: "#666",
+          fontFamily: "sans-serif",
+          opacity,
+        }}
+      >
+        Frame: {frame}
+      </p>
+    </AbsoluteFill>
+  );
+};
 `;
 
 export const compositionFile = `import { AbsoluteFill, useCurrentFrame } from "remotion";

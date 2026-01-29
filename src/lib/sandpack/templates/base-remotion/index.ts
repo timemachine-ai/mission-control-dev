@@ -23,6 +23,7 @@
 // Import source files
 import {
   appFile,
+  myCompFile,
   compositionFile,
   rootFile,
   indexEntryFile,
@@ -85,6 +86,9 @@ export const baseRemotionFiles: SandpackFiles = {
   // Main App entry point (what Sandpack renders with Remotion Player)
   "/App.tsx": appFile,
 
+  // MyComp - The composition rendered by App.tsx (MUST be at root level)
+  "/MyComp.tsx": myCompFile,
+
   // Package.json
   "/package.json": packageJsonFile,
 
@@ -137,15 +141,14 @@ export const baseRemotionFiles: SandpackFiles = {
 
 /**
  * Sandpack custom setup for Remotion projects
+ * IMPORTANT: Using 4.0.100 with React 18 - these are the WORKING versions
+ * React 19 causes Sandpack bundler to fail with COEP errors
  */
 export const baseRemotionDependencies = {
-  "@remotion/cli": "4.0.410",
-  "@remotion/player": "4.0.410",
-  remotion: "4.0.410",
-  react: "19.2.3",
-  "react-dom": "19.2.3",
-  "@remotion/tailwind-v4": "4.0.410",
-  tailwindcss: "4.0.0",
+  remotion: "4.0.100",
+  "@remotion/player": "4.0.100",
+  react: "18.2.0",
+  "react-dom": "18.2.0",
 };
 
 /**
