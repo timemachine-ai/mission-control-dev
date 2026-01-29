@@ -135,25 +135,10 @@ import { RemotionRoot } from "./Root";
 registerRoot(RemotionRoot);
 `;
 
-export const stylesFile = `@import "tailwindcss";
-`;
-
-export const packageJsonFile = `{
-  "name": "remotion-project",
-  "version": "1.0.0",
-  "description": "My Remotion video",
-  "private": true,
-  "dependencies": {
-    "@remotion/cli": "4.0.410",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "remotion": "4.0.410",
-    "@remotion/tailwind-v4": "4.0.410",
-    "tailwindcss": "4.0.0"
-  },
-  "devDependencies": {
-    "@types/react": "19.2.7",
-    "typescript": "5.9.3"
-  }
+export const stylesFile = `/* Global styles for Mission Control videos */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 `;
